@@ -1,16 +1,174 @@
-<div>
-  <h2>The Interplay Between Economic Development, Environmental Factors & Food Security</h2>
-  <p>
-    A data analysis and visualization project exploring how economic development
-    and environmental factors interact to influence food security outcomes
-    across countries over time.
-  </p>
-  <ul>
-    <li>Tools: Python, Pandas, Matplotlib, Seaborn</li>
-    <li>Focus: Multi-dataset cleaning, integration, EDA, visualization</li>
-  </ul>
-  <p>
-    <a href="economic-development-food-security.html">View Project</a> |
-    <a href="https://github.com/chetan-957/Data-Management-sp2025">GitHub Repo</a>
-  </p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects | Chetan Injavarapu</title>
+  <meta name="description" content="All data projects by Chetan Injavarapu — Power BI dashboards, geospatial analysis, machine learning, and data visualization.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0e14'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%2322d3ee' font-family='sans-serif' font-weight='bold'>CI</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">Chetan<span>.</span></a>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+      <a href="resume.html">Resume</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="padding-bottom: 40px;">
+    <div class="container">
+      <span class="eyebrow reveal">Portfolio</span>
+      <h1 class="reveal">Projects</h1>
+      <p class="lead reveal">Everything I've built — from Power BI dashboards on $45M+ in retail data to geospatial climate analysis across 180+ countries.</p>
+      <div class="filter-row reveal">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="powerbi">Power BI</button>
+        <button class="filter-btn" data-filter="python">Python</button>
+        <button class="filter-btn" data-filter="geospatial">Geospatial</button>
+        <button class="filter-btn" data-filter="ml">Machine Learning</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-bottom: 72px;">
+    <div class="container">
+
+      <!-- 01 -->
+      <article class="project-featured reveal" data-cats="powerbi sql python">
+        <div class="pf-top">
+          <h3>Retail Sales Performance &amp; Profitability Analysis</h3>
+          <span class="pf-num">01</span>
+        </div>
+        <div class="tags"><span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Data Modeling</span><span class="tag">Star Schema</span></div>
+        <p>End-to-end retail analytics solution: interactive Power BI dashboards analyzing <strong>$45M+ in operational sales data</strong> across stores, districts, and product categories — with overview, store, district, and item analysis layers.</p>
+        <ul class="pf-points">
+          <li>Designed a scalable star-schema model — Sales fact with Store, Item, District, and Time dimensions.</li>
+          <li>Built advanced DAX measures: Total Sales, Sales Variance %, Gross Margin, Sales per Sq Ft, YoY KPIs.</li>
+          <li>Multi-level analysis identifying top/bottom performers and regional sales trends.</li>
+          <li>What-If analysis to simulate pricing changes and forecast revenue impact.</li>
+        </ul>
+        <div class="pf-links">
+          <a class="link-btn" href="https://github.com/chetan-957/Retail-Sales-Performance-Profitability-Analysis" target="_blank" rel="noopener">GitHub Repo ↗</a>
+        </div>
+      </article>
+
+      <!-- 02 -->
+      <article class="project-featured reveal" data-cats="python sql geospatial">
+        <div class="pf-top">
+          <h3>Global Food Security &amp; Climate Risk Analysis</h3>
+          <span class="pf-num">02</span>
+        </div>
+        <div class="tags"><span class="tag">Python</span><span class="tag">SQL</span><span class="tag">Feature Engineering</span><span class="tag">Geospatial</span></div>
+        <p>Integrated multi-source datasets (FAOSTAT, World Bank WDI, emissions) across <strong>180+ countries (1980–2023)</strong> to analyze food security, inequality, and supply stability at a global scale.</p>
+        <ul class="pf-points">
+          <li>Engineered Food Affordability Index and Nutrient Supply Score to quantify food security.</li>
+          <li>Identified 3 global food crisis periods; methane-heavy economies showed 25–40% higher price volatility.</li>
+          <li>Geospatial + trend analysis classifying countries into risk tiers for policy insights.</li>
+        </ul>
+        <div class="pf-links">
+          <a class="link-btn" href="https://github.com/chetan-957/Global-Food-Security-Climate-Risk-Analysis" target="_blank" rel="noopener">GitHub Repo ↗</a>
+          <a class="link-btn" href="economic-development-food-security.html">Read Case Study →</a>
+        </div>
+      </article>
+
+      <!-- 03 -->
+      <article class="project-featured reveal" data-cats="python geospatial">
+        <div class="pf-top">
+          <h3>EV Adoption &amp; Air Pollution Impact Analysis</h3>
+          <span class="pf-num">03</span>
+        </div>
+        <div class="tags"><span class="tag">Python</span><span class="tag">GeoPandas</span><span class="tag">Spatial Analysis</span><span class="tag">Folium</span></div>
+        <p>Analyzed EV adoption, charging infrastructure, and PM2.5 pollution across <strong>58 California counties</strong> to link infrastructure investment with environmental outcomes.</p>
+        <ul class="pf-points">
+          <li>Unified EPA and ARB datasets into a single GeoDataFrame for large-scale geospatial analysis.</li>
+          <li>Quantified up to 30% lower pollution levels in high EV-adoption regions.</li>
+          <li>Built interactive Folium dashboards supporting regional planning decisions.</li>
+        </ul>
+        <div class="pf-links">
+          <a class="link-btn" href="https://github.com/chetan-957/EV-Adoption-Air-Pollution-Impact-Analysis-California-" target="_blank" rel="noopener">GitHub Repo ↗</a>
+        </div>
+      </article>
+
+      <div class="projects-grid" style="margin-top: 22px;">
+
+        <article class="project-card reveal" data-cats="python">
+          <h3>U.S. Mass Shootings: Trends &amp; Patterns (1966–2017)</h3>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Pandas</span><span class="tag">Matplotlib</span><span class="tag">Seaborn</span></div>
+          <p>Exploratory data analysis and visualization of 398 mass shooting incidents across the U.S. — uncovering spatial, temporal, and statistical patterns to support evidence-based public safety discussion.</p>
+          <div class="pf-links">
+            <a class="link-btn" href="https://github.com/chetan-957/Analyzing-Trends-and-Patterns-in-U.S.-Mass-Shootings-1966-Present-Using-Data-Visualization" target="_blank" rel="noopener">GitHub Repo ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-cats="python ml">
+          <h3>Bitcoin Price Forecasting with Sentiment Modeling</h3>
+          <div class="tags"><span class="tag">Python</span><span class="tag">VADER</span><span class="tag">ARIMA</span><span class="tag">LSTM</span></div>
+          <p>Combined Bitcoin historical price data with Twitter, Reddit, and news sentiment to test whether public sentiment improves price prediction — using walk-forward backtesting on ARIMA and LSTM models.</p>
+          <div class="pf-links">
+            <a class="link-btn" href="https://github.com/chetan-957/Bitcoin-Price-Forecasting-with-Sentiment-Modeling" target="_blank" rel="noopener">GitHub Repo ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-cats="python ml">
+          <h3>IBM Data Science Capstone</h3>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Machine Learning</span></div>
+          <p>Capstone project for the IBM Data Science Professional Certificate — an end-to-end applied data science project covering data collection, wrangling, analysis, and machine learning.</p>
+          <div class="pf-links">
+            <a class="link-btn" href="https://github.com/chetan-957/IBM-Capstone" target="_blank" rel="noopener">GitHub Repo ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-cats="python sql">
+          <h3>IBM Data Science Coursework</h3>
+          <div class="tags"><span class="tag">Python</span><span class="tag">SQL</span><span class="tag">Data Visualization</span></div>
+          <p>Collection of notebooks from the IBM Data Science Professional Certificate — covering Python, databases and SQL, data analysis, visualization, and machine learning fundamentals.</p>
+          <div class="pf-links">
+            <a class="link-btn" href="https://github.com/chetan-957/IBM-DataScience" target="_blank" rel="noopener">GitHub Repo ↗</a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section>
+    <div class="container">
+      <div class="cta reveal">
+        <h2>Want the details? Let's talk.</h2>
+        <p>Happy to walk through any of these projects — the data, the modeling choices, and what I'd do differently.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="mailto:injavarapuchetan@gmail.com">Get in Touch</a>
+          <a class="btn btn-ghost" href="https://github.com/chetan-957" target="_blank" rel="noopener">GitHub Profile ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© <span id="year">2026</span> Chetan Injavarapu</span>
+    <span>
+      <a href="https://github.com/chetan-957" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://linkedin.com/in/chetaninjavarapu" target="_blank" rel="noopener">LinkedIn</a> ·
+      <a href="mailto:injavarapuchetan@gmail.com">Email</a>
+    </span>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

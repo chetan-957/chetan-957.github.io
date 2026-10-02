@@ -3,78 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    The Interplay Between Economic Development, Environmental Factors & Food Security
-  </title>
+  <title>Food Security Case Study | Chetan Injavarapu</title>
+  <meta name="description" content="Case study: how economic development and environmental factors interact to shape food security outcomes across countries over time.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0e14'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%2322d3ee' font-family='sans-serif' font-weight='bold'>CI</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-<h1>The Interplay Between Economic Development, Environmental Factors & Food Security</h1>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">Chetan<span>.</span></a>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+      <a href="resume.html">Resume</a>
+    </nav>
+  </div>
+</header>
 
-<h2>Project Overview</h2>
-<p>
-This project examines how economic development and environmental factors
-interact to shape food security outcomes across countries over time.
-By integrating multiple real-world datasets, the analysis explores
-whether economic growth consistently translates into improved food
-availability, and how environmental pressures complicate this relationship.
-</p>
+<main>
+  <section class="hero" style="padding-bottom: 24px;">
+    <div class="container">
+      <a class="back-link" href="projects.html">← Back to Projects</a>
+      <span class="eyebrow reveal" style="display:inline-block;">Case Study</span>
+      <h1 class="reveal" style="font-size: clamp(2rem, 4.6vw, 3.2rem);">The Interplay Between Economic Development, Environmental Factors &amp; Food Security</h1>
+      <div class="tags reveal" style="margin-top: 18px;">
+        <span class="tag">Python</span><span class="tag">SQL</span><span class="tag">Pandas</span><span class="tag">Matplotlib</span><span class="tag">Seaborn</span><span class="tag">Geospatial</span>
+      </div>
+    </div>
+  </section>
 
-<h2>Datasets Used</h2>
-<ul>
-  <li>FAOSTAT Food Balance Sheets (food supply & nutrition indicators)</li>
-  <li>World Bank World Development Indicators (GDP, GNI, inequality)</li>
-  <li>Environmental datasets (CO₂ and related emissions indicators)</li>
-</ul>
+  <section style="padding-bottom: 72px;">
+    <div class="container">
+      <div class="case-body reveal">
+        <h2>Project Overview</h2>
+        <p>This project examines how economic development and environmental factors interact to shape food security outcomes across countries over time. By integrating multiple real-world datasets, the analysis explores whether economic growth consistently translates into improved food availability — and how environmental pressures complicate that relationship.</p>
 
-<h2>Data Cleaning & Integration</h2>
-<p>
-The analysis required extensive preprocessing, including harmonizing
-country identifiers, aligning time ranges across datasets, handling
-missing values, and creating derived indicators at the country–year level.
-Multiple datasets were merged into a unified analytical structure
-to support cross-country and temporal comparisons.
-</p>
+        <h2>Datasets Used</h2>
+        <ul>
+          <li>FAOSTAT Food Balance Sheets (food supply &amp; nutrition indicators)</li>
+          <li>World Bank World Development Indicators (GDP, GNI, inequality)</li>
+          <li>Environmental datasets (CO₂ and methane emissions indicators)</li>
+          <li>Food price inflation series across 180+ countries (1980–2023)</li>
+        </ul>
 
-<h2>Analysis & Visualization</h2>
-<p>
-Exploratory data analysis and visualization techniques were applied
-to examine trends, correlations, and distributional differences across
-income groups and regions. Visualizations were used to compare food
-availability metrics against economic and environmental indicators,
-highlighting structural patterns rather than isolated observations.
-</p>
+        <h2>Data Cleaning &amp; Integration</h2>
+        <p>The analysis required extensive preprocessing: harmonizing country identifiers, aligning time ranges across datasets, handling missing values, and creating derived indicators at the country–year level. Multiple datasets were merged into a unified analytical structure to support cross-country and temporal comparisons.</p>
+        <p>Custom metrics were engineered to make the analysis concrete — including a <strong>Food Affordability Index</strong> and a <strong>Nutrient Supply Score</strong> — quantifying food security, inequality, and climate vulnerability in comparable terms.</p>
 
-<h2>Key Insights</h2>
-<ul>
-  <li>Economic development is associated with higher food availability,
-      but the magnitude of improvement varies significantly across
-      income groups and regions.</li>
-  <li>Upper-middle-income countries showed stronger marginal gains in
-      food availability compared to high-income countries, where
-      improvements tended to plateau.</li>
-  <li>Environmental indicators such as emissions reveal trade-offs,
-      suggesting that improvements in food security are often accompanied
-      by increased environmental pressure.</li>
-  <li>High-income countries exhibit distinct food security and
-      sustainability patterns, highlighting that economic growth alone
-      does not guarantee environmentally balanced outcomes.</li>
-</ul>
+        <h2>Analysis &amp; Visualization</h2>
+        <p>Exploratory data analysis and visualization techniques were applied to examine trends, correlations, and distributional differences across income groups and regions. Time-series and geospatial visualizations (line plots, choropleths, scatter grids) were used to compare food availability metrics against economic and environmental indicators — highlighting structural patterns rather than isolated observations.</p>
 
-<h2>Conclusion</h2>
-<p>
-This project demonstrates how combining economic, environmental, and
-food system data provides a more nuanced understanding of global food
-security challenges. The findings highlight the importance of evaluating
-development outcomes through both social and environmental lenses when
-assessing long-term sustainability.
-</p>
+        <h2>Key Insights</h2>
+        <ul>
+          <li>Economic development is associated with higher food availability, but the magnitude of improvement varies significantly across income groups and regions.</li>
+          <li>Upper-middle-income countries showed stronger marginal gains in food availability compared to high-income countries, where improvements tended to plateau.</li>
+          <li>Methane-heavy economies experienced 25–40% higher food price volatility — environmental indicators reveal real trade-offs.</li>
+          <li>Three major global food crisis periods were identified, and countries were classified into risk tiers for nutrition sustainability.</li>
+          <li>High-income countries exhibit distinct food security and sustainability patterns — economic growth alone does not guarantee environmentally balanced outcomes.</li>
+        </ul>
 
-<p>
-<a href="https://github.com/chetan-957/Data-Management-sp2025">
-View GitHub Repository
-</a>
-</p>
+        <h2>Conclusion</h2>
+        <p>This project demonstrates how combining economic, environmental, and food system data provides a more nuanced understanding of global food security challenges. The findings highlight the importance of evaluating development outcomes through both social and environmental lenses when assessing long-term sustainability.</p>
 
+        <div class="pf-links" style="margin-top: 28px;">
+          <a class="link-btn" href="https://github.com/chetan-957/Global-Food-Security-Climate-Risk-Analysis" target="_blank" rel="noopener">View GitHub Repository ↗</a>
+          <a class="link-btn" href="projects.html">← All Projects</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© <span id="year">2026</span> Chetan Injavarapu</span>
+    <span>
+      <a href="https://github.com/chetan-957" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://linkedin.com/in/chetaninjavarapu" target="_blank" rel="noopener">LinkedIn</a> ·
+      <a href="mailto:injavarapuchetan@gmail.com">Email</a>
+    </span>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
 </body>
 </html>
