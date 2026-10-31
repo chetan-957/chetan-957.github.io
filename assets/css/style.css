@@ -612,7 +612,6 @@ footer.site-footer {
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; gap: 8px; }
-  .poly-stage { order: -1; }
   #poly { width: min(340px, 90vw); }
   .skills-grid { grid-template-columns: repeat(2, 1fr); }
   .stats { grid-template-columns: repeat(2, 1fr); }
