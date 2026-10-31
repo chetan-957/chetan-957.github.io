@@ -55,7 +55,7 @@
         <div class="poly-stage reveal">
           <div class="poly-glow"></div>
           <canvas id="poly" aria-label="Interactive 3D polyhedron — drag to spin"></canvas>
-          <div class="poly-hint">✦ drag to spin the shape</div>
+          <div class="poly-hint">✦ drag to spin the GT3 RS</div>
         </div>
       </div>
 
@@ -231,7 +231,18 @@
   </div>
 </footer>
 
+<script>
+  // Fallback: if Three.js fails to load, render the canvas polyhedron instead.
+  window.__polyFallback = function () {
+    if (window.__polyFallbackLoaded) return;
+    window.__polyFallbackLoaded = true;
+    var s = document.createElement('script');
+    s.src = 'assets/js/polyhedron.js';
+    document.body.appendChild(s);
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" onerror="window.__polyFallback()"></script>
 <script src="assets/js/main.js"></script>
-<script src="assets/js/polyhedron.js"></script>
+<script src="assets/js/car-scene.js"></script>
 </body>
 </html>
