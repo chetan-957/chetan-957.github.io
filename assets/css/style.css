@@ -479,6 +479,7 @@ section.block { padding: 76px 0; }
 
 /* ---------- Education ---------- */
 .edu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .edu-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -616,6 +617,7 @@ footer.site-footer {
   .skills-grid { grid-template-columns: repeat(2, 1fr); }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .edu-grid { grid-template-columns: 1fr; }
+  .cert-grid { grid-template-columns: 1fr; }
   .about-layout { grid-template-columns: 1fr; gap: 32px; }
 }
 @media (max-width: 680px) {
