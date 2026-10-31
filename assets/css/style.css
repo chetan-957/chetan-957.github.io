@@ -372,6 +372,14 @@ section.block { padding: 76px 0; }
   font-weight: 600;
 }
 .work-links { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
+
+/* ---------- Main-page projects grid (small cards side by side) ---------- */
+.work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+.work-grid .work-item { margin-bottom: 0; }
+.work-grid .work-cover { height: 170px; }
+.work-grid .work-cover .w-num { font-size: 4rem; }
+.work-grid .work-body { padding: 24px 24px 26px; }
+.work-grid .work-points { display: none; }
 .text-link {
   font-weight: 600;
   font-size: 0.96rem;
