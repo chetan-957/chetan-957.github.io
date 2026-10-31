@@ -1,6 +1,7 @@
-// GT3 RS-style showroom car inside the glowing dodecahedron cage.
-// Three.js (UMD r128 from CDN). If THREE fails to load, the caller
-// falls back to the canvas polyhedron engine instead.
+// GT3 RS-style showroom car inside the layered globe cage.
+// Body is lofted from cross-sections (smooth, curvy — not boxy panels).
+// Three.js (UMD r128 from CDN). If THREE fails, caller falls back to
+// the canvas polyhedron engine.
 (function () {
   var canvas = document.getElementById('poly');
   if (!canvas) return;
@@ -30,68 +31,151 @@
   scene.add(pBlue);
 
   // ---- materials ----
-  var paint = new THREE.MeshStandardMaterial({ color: 0x06b6d4, metalness: 0.5, roughness: 0.3 });
-  var glass = new THREE.MeshStandardMaterial({ color: 0x050a14, metalness: 0.9, roughness: 0.08 });
+  var paint = new THREE.MeshPhysicalMaterial({ color: 0x06b6d4, metalness: 0.4, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.25, side: THREE.DoubleSide });
+  var glass = new THREE.MeshPhysicalMaterial({ color: 0x050a14, metalness: 0.9, roughness: 0.08, clearcoat: 1, side: THREE.DoubleSide });
   var trim = new THREE.MeshStandardMaterial({ color: 0x0d1420, metalness: 0.6, roughness: 0.4 });
   var tireMat = new THREE.MeshStandardMaterial({ color: 0x0a0d12, metalness: 0.1, roughness: 0.95 });
   var hubMat = new THREE.MeshStandardMaterial({ color: 0x22d3ee, metalness: 0.85, roughness: 0.25 });
   var lightMat = new THREE.MeshBasicMaterial({ color: 0x67e8f9 });
   var platformMat = new THREE.MeshStandardMaterial({ color: 0x0a1220, metalness: 0.7, roughness: 0.35 });
 
+  // ---- loft helpers ----
+  function catmull(p0, p1, p2, p3, t) {
+    var t2 = t * t, t3 = t2 * t;
+    return 0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+  }
+  // ctrl: [{x, top, w, bottom}] sorted by x ascending (rear -> front)
+  function loftStations(ctrl, per) {
+    var out = [];
+    for (var i = 0; i < ctrl.length - 1; i++) {
+      var p0 = ctrl[Math.max(0, i - 1)], p1 = ctrl[i], p2 = ctrl[i + 1], p3 = ctrl[Math.min(ctrl.length - 1, i + 2)];
+      for (var s = 0; s < per; s++) {
+        var t = s / per;
+        out.push({
+          x: p1.x + (p2.x - p1.x) * t,
+          top: catmull(p0.top, p1.top, p2.top, p3.top, t),
+          w: catmull(p0.w, p1.w, p2.w, p3.w, t),
+          bottom: catmull(p0.bottom, p1.bottom, p2.bottom, p3.bottom, t)
+        });
+      }
+    }
+    out.push(ctrl[ctrl.length - 1]);
+    return out;
+  }
+  // cross-section loop in [z, y] pairs: flat bottom, vertical sides, domed top
+  function crossSection(st, arcSegs) {
+    var B = st.bottom, T = st.top, W = st.w;
+    var sideH = B + (T - B) * 0.55;
+    var pts = [[-W, B], [-W, sideH]];
+    for (var k = 1; k < arcSegs; k++) {
+      var a = Math.PI * (1 - k / arcSegs);
+      pts.push([W * Math.cos(a), sideH + (T - sideH) * Math.sin(a)]);
+    }
+    pts.push([W, sideH], [W, B]);
+    return pts;
+  }
+  function buildLoft(ctrl, per, arcSegs) {
+    var slices = loftStations(ctrl, per);
+    var loop = slices.map(function (st) { return crossSection(st, arcSegs); });
+    var P = loop[0].length;
+    var positions = [], indices = [];
+    slices.forEach(function (st, i) {
+      loop[i].forEach(function (pt) { positions.push(st.x, pt[1], pt[0]); });
+    });
+    for (var i = 0; i < slices.length - 1; i++) {
+      for (var j = 0; j < P; j++) {
+        var j2 = (j + 1) % P;
+        var a = i * P + j, b = i * P + j2, c = (i + 1) * P + j2, d = (i + 1) * P + j;
+        indices.push(a, b, d, b, c, d);
+      }
+    }
+    function cap(sliceIdx, flip) {
+      var base = positions.length / 3, cx = 0, cy = 0, cz = 0;
+      loop[sliceIdx].forEach(function (pt) { cx += slices[sliceIdx].x; cy += pt[1]; cz += pt[0]; });
+      var n = loop[sliceIdx].length;
+      positions.push(cx / n, cy / n, cz / n);
+      for (var j = 0; j < n; j++) {
+        var j2 = (j + 1) % n;
+        if (flip) indices.push(base, sliceIdx * P + j2, sliceIdx * P + j);
+        else indices.push(base, sliceIdx * P + j, sliceIdx * P + j2);
+      }
+    }
+    cap(0, true);
+    cap(slices.length - 1, false);
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    return geo;
+  }
+
   var car = new THREE.Group();
 
-  // ---- body: side profile extruded (with wheel-arch holes) ----
-  var body = new THREE.Shape();
-  body.moveTo(-2.3, 0.42);
-  body.lineTo(-2.3, 0.82);
-  body.lineTo(-1.7, 0.86);
-  body.quadraticCurveTo(-1.0, 1.18, -0.2, 1.18);
-  body.lineTo(0.45, 1.18);
-  body.quadraticCurveTo(1.15, 0.9, 1.7, 0.8);
-  body.lineTo(2.28, 0.74);
-  body.quadraticCurveTo(2.34, 0.55, 2.28, 0.4);
-  body.lineTo(2.0, 0.3);
-  body.lineTo(-2.0, 0.3);
-  body.quadraticCurveTo(-2.3, 0.32, -2.3, 0.42);
-  [1.45, -1.45].forEach(function (wx) {
-    var hole = new THREE.Path();
-    hole.absarc(wx, 0.4, 0.46, 0, Math.PI * 2, true);
-    body.holes.push(hole);
-  });
-  var bodyGeo = new THREE.ExtrudeGeometry(body, {
-    depth: 1.6, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.08, bevelSegments: 3, steps: 1
-  });
-  bodyGeo.translate(0, 0, -0.8);
-  car.add(new THREE.Mesh(bodyGeo, paint));
+  // ---- body loft (rear -> front) ----
+  var bodyCtrl = [
+    { x: -2.35, top: 0.70, w: 0.78, bottom: 0.30 },
+    { x: -2.20, top: 0.86, w: 0.88, bottom: 0.30 },
+    { x: -1.60, top: 0.88, w: 0.92, bottom: 0.30 },
+    { x: -1.00, top: 0.88, w: 0.88, bottom: 0.30 },
+    { x: -0.30, top: 0.88, w: 0.86, bottom: 0.30 },
+    { x: 0.40, top: 0.88, w: 0.86, bottom: 0.30 },
+    { x: 0.90, top: 0.84, w: 0.88, bottom: 0.30 },
+    { x: 1.45, top: 0.82, w: 0.88, bottom: 0.30 },
+    { x: 2.10, top: 0.78, w: 0.86, bottom: 0.30 },
+    { x: 2.35, top: 0.70, w: 0.78, bottom: 0.30 }
+  ];
+  car.add(new THREE.Mesh(buildLoft(bodyCtrl, 6, 14), paint));
 
-  // ---- glasshouse ----
-  var glassShape = new THREE.Shape();
-  glassShape.moveTo(-1.5, 0.86);
-  glassShape.lineTo(-0.95, 1.14);
-  glassShape.lineTo(0.35, 1.14);
-  glassShape.lineTo(1.0, 0.86);
-  glassShape.closePath();
-  var glassGeo = new THREE.ExtrudeGeometry(glassShape, {
-    depth: 1.5, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 2, steps: 1
-  });
-  glassGeo.translate(0, 0, -0.75);
-  car.add(new THREE.Mesh(glassGeo, glass));
+  // ---- glasshouse loft ----
+  var glassCtrl = [
+    { x: -1.45, top: 0.90, w: 0.66, bottom: 0.80 },
+    { x: -1.10, top: 1.10, w: 0.73, bottom: 0.80 },
+    { x: -0.30, top: 1.16, w: 0.75, bottom: 0.80 },
+    { x: 0.40, top: 1.14, w: 0.73, bottom: 0.80 },
+    { x: 0.90, top: 0.94, w: 0.70, bottom: 0.80 },
+    { x: 1.00, top: 0.88, w: 0.66, bottom: 0.80 }
+  ];
+  car.add(new THREE.Mesh(buildLoft(glassCtrl, 6, 14), glass));
 
-  // ---- GT3 RS wing: big blade, swan-neck supports, end plates ----
-  var wing = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.06, 1.95), trim);
-  wing.position.set(-2.05, 1.32, 0);
+  // ---- widebody fender flares (half-torus over each wheel) ----
+  [[1.45, 0.92], [1.45, -0.92], [-1.45, 0.92], [-1.45, -0.92]].forEach(function (f) {
+    var flare = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.1, 10, 24, Math.PI), paint);
+    flare.position.set(f[0], 0.4, f[1]);
+    car.add(flare);
+  });
+
+  // ---- GT3 RS wing: rounded blade, swan-neck supports, end plates ----
+  function roundedRect(w, h, r) {
+    var s = new THREE.Shape();
+    s.moveTo(-w / 2 + r, -h / 2);
+    s.lineTo(w / 2 - r, -h / 2);
+    s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r);
+    s.lineTo(w / 2, h / 2 - r);
+    s.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2);
+    s.lineTo(-w / 2 + r, h / 2);
+    s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r);
+    s.lineTo(-w / 2, -h / 2 + r);
+    s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
+    return s;
+  }
+  var wingGeo = new THREE.ExtrudeGeometry(roundedRect(0.62, 0.07, 0.03), {
+    depth: 1.95, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2, steps: 1
+  });
+  wingGeo.translate(0, 0, -0.975);
+  var wing = new THREE.Mesh(wingGeo, trim);
+  wing.position.set(-2.05, 1.36, 0);
   wing.rotation.z = 0.1;
   car.add(wing);
   [-0.6, 0.6].forEach(function (z) {
-    var support = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.45, 0.3), trim);
-    support.position.set(-2.05, 1.08, z);
+    var support = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.5, 0.28), trim);
+    support.position.set(-2.05, 1.1, z);
     car.add(support);
-    var plate = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.22, 0.05), trim);
-    plate.position.set(-2.05, 1.32, z + (z > 0 ? 0.38 : -0.38));
+    var plate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.24, 0.05), trim);
+    plate.position.set(-2.05, 1.36, z + (z > 0 ? 0.4 : -0.4));
     car.add(plate);
   });
 
-  // ---- splitter, skirts ----
+  // ---- splitter, skirts, diffuser + fins ----
   var splitter = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 1.9), trim);
   splitter.position.set(2.15, 0.28, 0);
   car.add(splitter);
@@ -100,9 +184,58 @@
     skirt.position.set(0, 0.3, z);
     car.add(skirt);
   });
+  var diffuser = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.18, 1.4), trim);
+  diffuser.position.set(-2.28, 0.34, 0);
+  car.add(diffuser);
+  [-0.5, -0.17, 0.17, 0.5].forEach(function (z) {
+    var fin = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.16, 0.04), trim);
+    fin.position.set(-2.3, 0.34, z);
+    car.add(fin);
+  });
 
-  // ---- wheels ----
-  function wheel(x, z) {
+  // ---- side intakes (behind doors) ----
+  [-0.9, 0.9].forEach(function (z) {
+    var intake = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.28, 0.06), trim);
+    intake.position.set(-1.15, 0.62, z);
+    car.add(intake);
+  });
+
+  // ---- front intake ----
+  var grille = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 1.2), trim);
+  grille.position.set(2.32, 0.45, 0);
+  car.add(grille);
+
+  // ---- headlights (sleek ellipsoids) + full-width taillight bar ----
+  [-0.6, 0.6].forEach(function (z) {
+    var hl = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), lightMat);
+    hl.scale.set(1.6, 0.45, 0.7);
+    hl.position.set(2.02, 0.8, z);
+    car.add(hl);
+  });
+  var tl = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 1.5), lightMat);
+  tl.position.set(-2.36, 0.74, 0);
+  car.add(tl);
+
+  // ---- mirrors ----
+  [-0.92, 0.92].forEach(function (z) {
+    var stalk = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 0.18), trim);
+    stalk.position.set(0.55, 1.02, z > 0 ? 0.82 : -0.82);
+    car.add(stalk);
+    var mirror = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.09, 0.06), trim);
+    mirror.position.set(0.55, 1.02, z);
+    car.add(mirror);
+  });
+
+  // ---- center twin exhausts ----
+  [-0.28, 0.28].forEach(function (z) {
+    var ex = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.15, 16), trim);
+    ex.rotation.z = Math.PI / 2;
+    ex.position.set(-2.38, 0.36, z);
+    car.add(ex);
+  });
+
+  // ---- wheels with spokes ----
+  function wheel(x, z, side) {
     var g = new THREE.Group();
     var tire = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.32, 28), tireMat);
     tire.rotation.x = Math.PI / 2;
@@ -110,24 +243,21 @@
     var hub = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.34, 20), hubMat);
     hub.rotation.x = Math.PI / 2;
     g.add(hub);
+    for (var k = 0; k < 5; k++) {
+      var spoke = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.07, 0.06), hubMat);
+      spoke.rotation.z = k * (Math.PI * 2 / 5);
+      spoke.position.z = side * 0.17;
+      g.add(spoke);
+    }
     g.position.set(x, 0.4, z);
     return g;
   }
-  [[1.45, 0.82], [1.45, -0.82], [-1.45, 0.82], [-1.45, -0.82]].forEach(function (w) {
-    car.add(wheel(w[0], w[1]));
-  });
+  car.add(wheel(1.45, 0.82, 1));
+  car.add(wheel(1.45, -0.82, -1));
+  car.add(wheel(-1.45, 0.82, 1));
+  car.add(wheel(-1.45, -0.82, -1));
 
-  // ---- lights ----
-  [-0.5, 0.5].forEach(function (z) {
-    var hl = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, 0.5), lightMat);
-    hl.position.set(2.29, 0.68, z);
-    car.add(hl);
-  });
-  var tl = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, 1.5), lightMat);
-  tl.position.set(-2.31, 0.72, 0);
-  car.add(tl);
-
-  // ---- showroom platform + glow rings ----
+  // ---- showroom platform + glow rings (kept as-is) ----
   var carGroup = new THREE.Group();
   carGroup.add(car);
   var platform = new THREE.Mesh(new THREE.CylinderGeometry(3.4, 3.4, 0.08, 64), platformMat);
@@ -145,25 +275,7 @@
   carGroup.add(ring2);
   scene.add(carGroup);
 
-  // ---- dodecahedron cage + vertices ----
-  var cageGroup = new THREE.Group();
-  var cageGeo = new THREE.DodecahedronGeometry(4.0, 0);
-  var cageEdges = new THREE.EdgesGeometry(cageGeo);
-  var cage = new THREE.LineSegments(cageEdges,
-    new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.5 }));
-  cageGroup.add(cage);
-  var posAttr = cageGeo.attributes.position;
-  var vCount = posAttr.count;
-  var vPos = new Float32Array(vCount * 3);
-  for (var i = 0; i < vCount; i++) {
-    vPos[i * 3] = posAttr.getX(i);
-    vPos[i * 3 + 1] = posAttr.getY(i);
-    vPos[i * 3 + 2] = posAttr.getZ(i);
-  }
-  var vGeo = new THREE.BufferGeometry();
-  vGeo.setAttribute('position', new THREE.BufferAttribute(vPos, 3));
-
-  // soft round sprite for points
+  // ---- the globe, like before: outer dodecahedron + inner icosahedron ----
   function makeSprite() {
     var c = document.createElement('canvas');
     c.width = c.height = 64;
@@ -177,11 +289,29 @@
     return new THREE.CanvasTexture(c);
   }
   var sprite = makeSprite();
-  var cagePts = new THREE.Points(vGeo, new THREE.PointsMaterial({
+
+  var cageGroup = new THREE.Group();
+  var cageGeo = new THREE.DodecahedronGeometry(4.0, 0);
+  cageGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(cageGeo),
+    new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.5 })));
+  var cagePos = cageGeo.attributes.position;
+  var cagePts = new Float32Array(cagePos.count * 3);
+  for (var i = 0; i < cagePos.count; i++) {
+    cagePts[i * 3] = cagePos.getX(i);
+    cagePts[i * 3 + 1] = cagePos.getY(i);
+    cagePts[i * 3 + 2] = cagePos.getZ(i);
+  }
+  var cagePtsGeo = new THREE.BufferGeometry();
+  cagePtsGeo.setAttribute('position', new THREE.BufferAttribute(cagePts, 3));
+  cageGroup.add(new THREE.Points(cagePtsGeo, new THREE.PointsMaterial({
     color: 0x67e8f9, size: 0.12, map: sprite, transparent: true, depthWrite: false
-  }));
-  cageGroup.add(cagePts);
+  })));
   scene.add(cageGroup);
+
+  var innerGroup = new THREE.Group();
+  innerGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(3.6, 0)),
+    new THREE.LineBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.3 })));
+  scene.add(innerGroup);
 
   // ---- particles ----
   var pCount = 220;
@@ -251,6 +381,7 @@
     }
     cageGroup.rotation.y -= dt * 0.12;
     cageGroup.rotation.x = Math.sin(Date.now() * 0.0002) * 0.08;
+    innerGroup.rotation.y += dt * 0.08;
     particles.rotation.y += dt * 0.03;
     render();
   })();
