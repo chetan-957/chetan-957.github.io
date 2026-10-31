@@ -137,6 +137,9 @@
   ];
   car.add(new THREE.Mesh(buildLoft(glassCtrl, 6, 14), glass));
 
+  // bigger presence in the cage
+  car.scale.setScalar(1.12);
+
   // ---- widebody fender flares (half-torus over each wheel) ----
   [[1.45, 0.92], [1.45, -0.92], [-1.45, 0.92], [-1.45, -0.92]].forEach(function (f) {
     var flare = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.1, 10, 24, Math.PI), paint);
@@ -158,21 +161,29 @@
     s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
     return s;
   }
-  var wingGeo = new THREE.ExtrudeGeometry(roundedRect(0.62, 0.07, 0.03), {
-    depth: 1.95, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2, steps: 1
+  var wingGeo = new THREE.ExtrudeGeometry(roundedRect(0.7, 0.08, 0.035), {
+    depth: 2.05, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2, steps: 1
   });
-  wingGeo.translate(0, 0, -0.975);
+  wingGeo.translate(0, 0, -1.025);
   var wing = new THREE.Mesh(wingGeo, trim);
-  wing.position.set(-2.05, 1.36, 0);
-  wing.rotation.z = 0.1;
+  wing.position.set(-2.05, 1.48, 0);
+  wing.rotation.z = 0.12;
   car.add(wing);
   [-0.6, 0.6].forEach(function (z) {
-    var support = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.5, 0.28), trim);
-    support.position.set(-2.05, 1.1, z);
+    var support = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.58, 0.28), trim);
+    support.position.set(-2.05, 1.16, z);
     car.add(support);
-    var plate = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.24, 0.05), trim);
-    plate.position.set(-2.05, 1.36, z + (z > 0 ? 0.4 : -0.4));
+    var plate = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.3, 0.05), trim);
+    plate.position.set(-2.05, 1.48, z + (z > 0 ? 0.42 : -0.42));
     car.add(plate);
+  });
+
+  // front dive planes (canards) — signature GT3 RS aero
+  [-0.88, 0.88].forEach(function (z) {
+    var canard = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, 0.3), trim);
+    canard.position.set(2.18, 0.52, z);
+    canard.rotation.y = z > 0 ? -0.25 : 0.25;
+    car.add(canard);
   });
 
   // ---- splitter, skirts, diffuser + fins ----
@@ -244,7 +255,7 @@
     hub.rotation.x = Math.PI / 2;
     g.add(hub);
     for (var k = 0; k < 5; k++) {
-      var spoke = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.07, 0.06), hubMat);
+      var spoke = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.09, 0.06), hubMat);
       spoke.rotation.z = k * (Math.PI * 2 / 5);
       spoke.position.z = side * 0.17;
       g.add(spoke);
