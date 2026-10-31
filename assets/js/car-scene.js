@@ -1,5 +1,5 @@
-// GT3 RS-style showroom car inside the layered globe cage.
-// Body is lofted from cross-sections (smooth, curvy — not boxy panels).
+// Wireframe hologram GT3 RS inside a SINGLE globe cage.
+// Style matches the reference image: neon mesh car, cyan-blue only.
 // Three.js (UMD r128 from CDN). If THREE fails, caller falls back to
 // the canvas polyhedron engine.
 (function () {
@@ -18,7 +18,7 @@
   camera.position.set(6.2, 3.4, 8.4);
   camera.lookAt(0, 0.75, 0);
 
-  // ---- lights ----
+  // ---- lights (for the solid platform) ----
   scene.add(new THREE.AmbientLight(0x8fa3c8, 0.55));
   var dir = new THREE.DirectionalLight(0xffffff, 1.1);
   dir.position.set(5, 9, 6);
@@ -30,21 +30,32 @@
   pBlue.position.set(5, 2, -4);
   scene.add(pBlue);
 
-  // ---- materials ----
-  var paint = new THREE.MeshPhysicalMaterial({ color: 0x06b6d4, metalness: 0.4, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.25, side: THREE.DoubleSide });
-  var glass = new THREE.MeshPhysicalMaterial({ color: 0x050a14, metalness: 0.9, roughness: 0.08, clearcoat: 1, side: THREE.DoubleSide });
-  var trim = new THREE.MeshStandardMaterial({ color: 0x0d1420, metalness: 0.6, roughness: 0.4 });
-  var tireMat = new THREE.MeshStandardMaterial({ color: 0x0a0d12, metalness: 0.1, roughness: 0.95 });
-  var hubMat = new THREE.MeshStandardMaterial({ color: 0x22d3ee, metalness: 0.85, roughness: 0.25 });
-  var lightMat = new THREE.MeshBasicMaterial({ color: 0x67e8f9 });
+  // ---- materials: cyan-blue wireframe family + faint hologram fill ----
+  function wire(color, opacity) {
+    return new THREE.MeshBasicMaterial({ color: color, wireframe: true, transparent: true, opacity: opacity, side: THREE.DoubleSide });
+  }
+  var wireCyan = wire(0x22d3ee, 0.85);
+  var wireSky = wire(0x67e8f9, 0.9);
+  var wireBlue = wire(0x3b82f6, 0.7);
+  var glowMat = new THREE.MeshBasicMaterial({ color: 0x67e8f9 });
+  var fillMat = new THREE.MeshBasicMaterial({ color: 0x0a2530, transparent: true, opacity: 0.10, depthWrite: false });
   var platformMat = new THREE.MeshStandardMaterial({ color: 0x0a1220, metalness: 0.7, roughness: 0.35 });
 
-  // ---- loft helpers ----
+  function hologram(geo, mat) {
+    var g = new THREE.Group();
+    var fill = new THREE.Mesh(geo, fillMat);
+    fill.renderOrder = 0;
+    var mesh = new THREE.Mesh(geo, mat);
+    mesh.renderOrder = 1;
+    g.add(fill, mesh);
+    return g;
+  }
+
+  // ---- loft helpers (smooth sculpted body) ----
   function catmull(p0, p1, p2, p3, t) {
     var t2 = t * t, t3 = t2 * t;
     return 0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
   }
-  // ctrl: [{x, top, w, bottom}] sorted by x ascending (rear -> front)
   function loftStations(ctrl, per) {
     var out = [];
     for (var i = 0; i < ctrl.length - 1; i++) {
@@ -62,7 +73,6 @@
     out.push(ctrl[ctrl.length - 1]);
     return out;
   }
-  // cross-section loop in [z, y] pairs: flat bottom, vertical sides, domed top
   function crossSection(st, arcSegs) {
     var B = st.bottom, T = st.top, W = st.w;
     var sideH = B + (T - B) * 0.55;
@@ -111,7 +121,7 @@
 
   var car = new THREE.Group();
 
-  // ---- body loft (rear -> front) ----
+  // ---- body + glasshouse: dense mesh so the wireframe reads like the image ----
   var bodyCtrl = [
     { x: -2.35, top: 0.70, w: 0.78, bottom: 0.30 },
     { x: -2.20, top: 0.86, w: 0.88, bottom: 0.30 },
@@ -124,9 +134,7 @@
     { x: 2.10, top: 0.78, w: 0.86, bottom: 0.30 },
     { x: 2.35, top: 0.70, w: 0.78, bottom: 0.30 }
   ];
-  car.add(new THREE.Mesh(buildLoft(bodyCtrl, 6, 14), paint));
-
-  // ---- glasshouse loft ----
+  car.add(hologram(buildLoft(bodyCtrl, 8, 18), wireCyan));
   var glassCtrl = [
     { x: -1.45, top: 0.90, w: 0.66, bottom: 0.80 },
     { x: -1.10, top: 1.10, w: 0.73, bottom: 0.80 },
@@ -135,19 +143,16 @@
     { x: 0.90, top: 0.94, w: 0.70, bottom: 0.80 },
     { x: 1.00, top: 0.88, w: 0.66, bottom: 0.80 }
   ];
-  car.add(new THREE.Mesh(buildLoft(glassCtrl, 6, 14), glass));
+  car.add(hologram(buildLoft(glassCtrl, 8, 18), wireSky));
 
-  // bigger presence in the cage
-  car.scale.setScalar(1.12);
-
-  // ---- widebody fender flares (half-torus over each wheel) ----
+  // ---- widebody fender flares (wireframe) ----
   [[1.45, 0.92], [1.45, -0.92], [-1.45, 0.92], [-1.45, -0.92]].forEach(function (f) {
-    var flare = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.1, 10, 24, Math.PI), paint);
+    var flare = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.1, 10, 24, Math.PI), wireCyan);
     flare.position.set(f[0], 0.4, f[1]);
     car.add(flare);
   });
 
-  // ---- GT3 RS wing: rounded blade, swan-neck supports, end plates ----
+  // ---- GT3 RS wing: rounded blade, supports, end plates (all wireframe) ----
   function roundedRect(w, h, r) {
     var s = new THREE.Shape();
     s.moveTo(-w / 2 + r, -h / 2);
@@ -165,97 +170,92 @@
     depth: 2.05, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2, steps: 1
   });
   wingGeo.translate(0, 0, -1.025);
-  var wing = new THREE.Mesh(wingGeo, trim);
+  var wing = new THREE.Mesh(wingGeo, wireCyan);
   wing.position.set(-2.05, 1.48, 0);
   wing.rotation.z = 0.12;
   car.add(wing);
   [-0.6, 0.6].forEach(function (z) {
-    var support = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.58, 0.28), trim);
+    var support = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.58, 0.28), wireBlue);
     support.position.set(-2.05, 1.16, z);
     car.add(support);
-    var plate = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.3, 0.05), trim);
+    var plate = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.3, 0.05), wireCyan);
     plate.position.set(-2.05, 1.48, z + (z > 0 ? 0.42 : -0.42));
     car.add(plate);
   });
 
-  // front dive planes (canards) — signature GT3 RS aero
+  // ---- front dive planes (canards) ----
   [-0.88, 0.88].forEach(function (z) {
-    var canard = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, 0.3), trim);
+    var canard = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, 0.3), wireCyan);
     canard.position.set(2.18, 0.52, z);
     canard.rotation.y = z > 0 ? -0.25 : 0.25;
     car.add(canard);
   });
 
-  // ---- splitter, skirts, diffuser + fins ----
-  var splitter = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 1.9), trim);
+  // ---- splitter, skirts, diffuser + fins, side intakes, grille ----
+  var splitter = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 1.9), wireBlue);
   splitter.position.set(2.15, 0.28, 0);
   car.add(splitter);
   [-0.86, 0.86].forEach(function (z) {
-    var skirt = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.08, 0.08), trim);
+    var skirt = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.08, 0.08), wireBlue);
     skirt.position.set(0, 0.3, z);
     car.add(skirt);
   });
-  var diffuser = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.18, 1.4), trim);
+  var diffuser = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.18, 1.4), wireBlue);
   diffuser.position.set(-2.28, 0.34, 0);
   car.add(diffuser);
   [-0.5, -0.17, 0.17, 0.5].forEach(function (z) {
-    var fin = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.16, 0.04), trim);
+    var fin = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.16, 0.04), wireBlue);
     fin.position.set(-2.3, 0.34, z);
     car.add(fin);
   });
-
-  // ---- side intakes (behind doors) ----
   [-0.9, 0.9].forEach(function (z) {
-    var intake = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.28, 0.06), trim);
+    var intake = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.28, 0.06), wireBlue);
     intake.position.set(-1.15, 0.62, z);
     car.add(intake);
   });
-
-  // ---- front intake ----
-  var grille = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 1.2), trim);
+  var grille = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 1.2), wireBlue);
   grille.position.set(2.32, 0.45, 0);
   car.add(grille);
 
-  // ---- headlights (sleek ellipsoids) + full-width taillight bar ----
+  // ---- glowing headlight rings + full-width taillight bar ----
   [-0.6, 0.6].forEach(function (z) {
-    var hl = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), lightMat);
-    hl.scale.set(1.6, 0.45, 0.7);
-    hl.position.set(2.02, 0.8, z);
+    var hl = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.02, 8, 24), glowMat);
+    hl.position.set(2.06, 0.8, z);
+    hl.rotation.y = Math.PI / 2;
+    hl.scale.set(1, 1.4, 1);
     car.add(hl);
   });
-  var tl = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 1.5), lightMat);
+  var tl = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 1.5), glowMat);
   tl.position.set(-2.36, 0.74, 0);
   car.add(tl);
 
-  // ---- mirrors ----
+  // ---- mirrors + center twin exhausts ----
   [-0.92, 0.92].forEach(function (z) {
-    var stalk = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 0.18), trim);
+    var stalk = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 0.18), wireBlue);
     stalk.position.set(0.55, 1.02, z > 0 ? 0.82 : -0.82);
     car.add(stalk);
-    var mirror = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.09, 0.06), trim);
+    var mirror = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.09, 0.06), wireCyan);
     mirror.position.set(0.55, 1.02, z);
     car.add(mirror);
   });
-
-  // ---- center twin exhausts ----
   [-0.28, 0.28].forEach(function (z) {
-    var ex = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.15, 16), trim);
+    var ex = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.15, 16), wireBlue);
     ex.rotation.z = Math.PI / 2;
     ex.position.set(-2.38, 0.36, z);
     car.add(ex);
   });
 
-  // ---- wheels with spokes ----
+  // ---- wireframe wheels: tire, hub, spokes ----
   function wheel(x, z, side) {
     var g = new THREE.Group();
-    var tire = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.32, 28), tireMat);
+    var tire = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.32, 28), wireCyan);
     tire.rotation.x = Math.PI / 2;
     g.add(tire);
-    var hub = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.34, 20), hubMat);
+    var hub = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.34, 20), wireSky);
     hub.rotation.x = Math.PI / 2;
     g.add(hub);
     for (var k = 0; k < 5; k++) {
-      var spoke = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.09, 0.06), hubMat);
+      var spoke = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.09, 0.06), wireSky);
       spoke.rotation.z = k * (Math.PI * 2 / 5);
       spoke.position.z = side * 0.17;
       g.add(spoke);
@@ -267,6 +267,9 @@
   car.add(wheel(1.45, -0.82, -1));
   car.add(wheel(-1.45, 0.82, 1));
   car.add(wheel(-1.45, -0.82, -1));
+
+  // bigger presence in the cage
+  car.scale.setScalar(1.12);
 
   // ---- showroom platform + glow rings (kept as-is) ----
   var carGroup = new THREE.Group();
@@ -286,7 +289,7 @@
   carGroup.add(ring2);
   scene.add(carGroup);
 
-  // ---- the globe, like before: outer dodecahedron + inner icosahedron ----
+  // ---- SINGLE globe: one dodecahedron cage + vertices + particles ----
   function makeSprite() {
     var c = document.createElement('canvas');
     c.width = c.height = 64;
@@ -318,11 +321,6 @@
     color: 0x67e8f9, size: 0.12, map: sprite, transparent: true, depthWrite: false
   })));
   scene.add(cageGroup);
-
-  var innerGroup = new THREE.Group();
-  innerGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(3.6, 0)),
-    new THREE.LineBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.3 })));
-  scene.add(innerGroup);
 
   // ---- particles ----
   var pCount = 220;
@@ -392,7 +390,6 @@
     }
     cageGroup.rotation.y -= dt * 0.12;
     cageGroup.rotation.x = Math.sin(Date.now() * 0.0002) * 0.08;
-    innerGroup.rotation.y += dt * 0.08;
     particles.rotation.y += dt * 0.03;
     render();
   })();
