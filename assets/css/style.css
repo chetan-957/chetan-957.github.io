@@ -289,6 +289,10 @@ img { max-width: 100%; }
 
 /* ---------- Sections ---------- */
 section.block { padding: 76px 0; }
+
+/* keep anchored sections clear of the fixed 66px nav when jumping from nav buttons.
+   (#work and #contact already clear it via their own top padding, so they are left alone.) */
+#about, #experience, #skills, #certifications { scroll-margin-top: 90px; }
 .section-head { margin-bottom: 44px; max-width: 720px; }
 .section-head .kicker {
   font-size: 0.82rem;
