@@ -122,6 +122,13 @@ img { max-width: 100%; }
 }
 .nav-links a:hover { color: var(--text); background: var(--surface-2); text-decoration: none; }
 .nav-links a.active { color: var(--cyan); background: var(--accent-soft); }
+/* Resume is always highlighted as the nav CTA, on every page (independent of .active) */
+.nav-links a.resume-cta {
+  color: var(--cyan);
+  background: rgba(34, 211, 238, 0.14);
+  border: 1px solid rgba(34, 211, 238, 0.4);
+}
+.nav-links a.resume-cta:hover { background: rgba(34, 211, 238, 0.22); color: var(--cyan); }
 .nav-toggle {
   display: none;
   background: none;
