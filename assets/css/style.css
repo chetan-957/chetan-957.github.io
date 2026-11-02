@@ -736,7 +736,23 @@ html[data-theme="light"] body::before {
     radial-gradient(700px 500px at -10% 30%, rgba(234, 88, 12, 0.14), transparent 60%),
     radial-gradient(600px 400px at 50% 110%, rgba(245, 158, 11, 0.12), transparent 60%);
 }
-html[data-theme="light"] body.star-bg::after { display: none; }
+/* day sky replaces the night starfield: sun, soft clouds, and sunbeams behind all content */
+html[data-theme="light"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle 190px at 86% 9%, rgba(255, 243, 196, 0.95) 0%, rgba(251, 191, 36, 0.55) 42%, rgba(245, 158, 11, 0) 70%),
+    radial-gradient(ellipse 150px 42px at 18% 16%, rgba(255, 255, 255, 0.75), transparent 70%),
+    radial-gradient(ellipse 110px 34px at 30% 10%, rgba(255, 255, 255, 0.6), transparent 70%),
+    radial-gradient(ellipse 130px 36px at 62% 22%, rgba(255, 255, 255, 0.5), transparent 70%),
+    repeating-linear-gradient(115deg, rgba(255, 222, 130, 0.09) 0 70px, transparent 70px 170px),
+    linear-gradient(180deg, rgba(251, 191, 36, 0.16), rgba(251, 191, 36, 0) 42%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
 html[data-theme="light"] ::selection { background: rgba(234, 88, 12, 0.25); }
 html[data-theme="light"] .nav { background: rgba(250, 247, 242, 0.85); }
 html[data-theme="light"] .btn-primary { box-shadow: 0 14px 34px -12px rgba(234, 88, 12, 0.45); }
