@@ -797,3 +797,24 @@ html[data-theme="light"] .g7 { background: linear-gradient(135deg, #dc2626, #f43
 @media (max-width: 680px) {
   html[data-theme="light"] .nav-links { background: rgba(250, 247, 242, 0.98); }
 }
+
+/* light-mode birds: small dark silhouettes flying across the sunset sky, day only.
+   The layer sits above the sky (z-index 1) but below content, which shares z-index 1
+   and comes later in the DOM, so birds fly behind text and cards. */
+.birds { display: none; position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+html[data-theme="light"] .birds { display: block; }
+.bird { position: absolute; left: 0; animation: birdFly linear infinite; }
+.bird svg { display: block; width: 100%; height: auto; animation: birdFlap ease-in-out infinite; transform-origin: center; }
+.b1 { top: 14%; width: 26px; animation-duration: 38s; animation-delay: 0s; }
+.b1 svg { animation-duration: 0.55s; }
+.b2 { top: 19%; width: 20px; animation-duration: 46s; animation-delay: -12s; }
+.b2 svg { animation-duration: 0.65s; }
+.b3 { top: 24%; width: 30px; animation-duration: 33s; animation-delay: -6s; }
+.b3 svg { animation-duration: 0.5s; }
+.b4 { top: 17%; width: 18px; animation-duration: 52s; animation-delay: -24s; }
+.b4 svg { animation-duration: 0.7s; }
+.b5 { top: 28%; width: 22px; animation-duration: 42s; animation-delay: -18s; animation-direction: reverse; }
+.b5 svg { animation-duration: 0.6s; }
+@keyframes birdFly { from { transform: translateX(-10vw); } to { transform: translateX(110vw); } }
+@keyframes birdFlap { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.45); } }
+@media (prefers-reduced-motion: reduce) { html[data-theme="light"] .birds { display: none; } }
