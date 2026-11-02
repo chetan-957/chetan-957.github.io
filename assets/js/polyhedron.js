@@ -8,7 +8,7 @@
   // Theme palette: night (cyan) vs day (amber). Read live so toggling repaints.
   function themeColors() {
     if (document.documentElement.getAttribute('data-theme') === 'light') {
-      return { particle: 'rgba(217,119,6,', inner: 'rgba(234,88,12,A)', outer: 'rgba(245,158,11,A)' };
+      return { particle: 'rgba(239,45,26,', inner: 'rgba(244,63,29,A)', outer: 'rgba(239,45,26,A)' };
     }
     return { particle: 'rgba(56,189,248,', inner: 'rgba(59,130,246,A)', outer: 'rgba(34,211,238,A)' };
   }

@@ -169,7 +169,7 @@
   // sky-blue at night, burnt orange in daylight, matching the light-mode mockup. ----
   var THEMES = {
     dark: { paint: 0x38bdf8, platform: 0x0a1220, ring1: 0x22d3ee, ring2: 0x3b82f6, cage: 0x22d3ee, cagePts: 0x67e8f9, particles: 0x38bdf8, pCyan: 0x22d3ee, pBlue: 0x3b82f6 },
-    light: { paint: 0xea580c, platform: 0xe7dccb, ring1: 0xea580c, ring2: 0xf59e0b, cage: 0xea580c, cagePts: 0xf59e0b, particles: 0xd97706, pCyan: 0xf59e0b, pBlue: 0xea580c }
+    light: { paint: 0xef3d1a, platform: 0xe7dccb, ring1: 0xef2d1a, ring2: 0xf97316, cage: 0xf43f1d, cagePts: 0xef2d1a, particles: 0xef2d1a, pCyan: 0xef2d1a, pBlue: 0xf97316 }
   };
   function applyTheme() {
     var t = THEMES[document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'];
