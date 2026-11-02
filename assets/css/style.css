@@ -760,20 +760,7 @@ html[data-theme="light"] .poly-glow {
   background: radial-gradient(circle, rgba(255, 244, 214, 0.95), rgba(251, 146, 60, 0.45) 55%, transparent 70%);
 }
 
-/* day mode content sections become warm-white cards on the sunset, like the mockup's panel: readable text, sunset showing in the gaps, hero, and footer */
-html[data-theme="light"] main > section:not(.hero) {
-  background: #fffdf9;
-  width: min(1200px, 94%);
-  margin: 0 auto 24px;
-  border-radius: 24px;
-  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.28);
-}
-html[data-theme="light"] main > section:not(.hero):not(#contact) {
-  padding-top: 76px !important;
-  padding-bottom: 76px;
-}
-
-/* hero readability on the sunset: gradient word goes solid, lead darkens, stats become white chips */
+/* hero readability on the sunset: gradient word goes solid, lead darkens, stats stay translucent but their text goes dark so they still read */
 html[data-theme="light"] .hero .grad-text {
   background: none;
   -webkit-background-clip: initial;
@@ -783,10 +770,8 @@ html[data-theme="light"] .hero .grad-text {
 }
 html[data-theme="light"] .hero .role { color: var(--text); }
 html[data-theme="light"] .hero p.lead { color: #292524; }
-html[data-theme="light"] .hero .stat {
-  background: rgba(255, 253, 249, 0.88);
-  border-color: rgba(0, 0, 0, 0.08);
-}
+html[data-theme="light"] .hero .stat .num { color: var(--text); }
+html[data-theme="light"] .hero .stat .lbl { color: #292524; }
 html[data-theme="light"] .stat:hover { border-color: rgba(234, 88, 12, 0.4); }
 html[data-theme="light"] .work-item:hover,
 html[data-theme="light"] .skill-card:hover { border-color: rgba(234, 88, 12, 0.35); }
