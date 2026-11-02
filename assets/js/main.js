@@ -82,4 +82,35 @@
   // Footer year
   var year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
+
+  // Theme toggle (dark / light). The button shows the mode you switch TO:
+  // sun in dark mode, moon in light mode. Choice is remembered per browser.
+  var themeBtn = document.getElementById('themeToggle');
+  function applyThemeIcon() {
+    if (!themeBtn) return;
+    var light = document.documentElement.getAttribute('data-theme') === 'light';
+    themeBtn.textContent = light ? '🌙' : '☀️';
+    themeBtn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
+    themeBtn.setAttribute('title', light ? 'Switch to dark mode' : 'Switch to light mode');
+  }
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      var light = document.documentElement.getAttribute('data-theme') !== 'light';
+      try {
+        if (light) {
+          document.documentElement.setAttribute('data-theme', 'light');
+          localStorage.setItem('theme', 'light');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('theme', 'dark');
+        }
+      } catch (e) {
+        if (light) document.documentElement.setAttribute('data-theme', 'light');
+        else document.documentElement.removeAttribute('data-theme');
+      }
+      applyThemeIcon();
+      window.dispatchEvent(new Event('themechange'));
+    });
+  }
+  applyThemeIcon();
 })();

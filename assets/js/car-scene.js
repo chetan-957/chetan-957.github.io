@@ -102,13 +102,13 @@
   var platform = new THREE.Mesh(new THREE.CylinderGeometry(3.4, 3.4, 0.08, 64), platformMat);
   platform.position.y = -0.02;
   carGroup.add(platform);
-  var ring1 = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.02, 8, 100),
-    new THREE.MeshBasicMaterial({ color: 0x22d3ee }));
+  var ring1Mat = new THREE.MeshBasicMaterial({ color: 0x22d3ee });
+  var ring1 = new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.02, 8, 100), ring1Mat);
   ring1.rotation.x = Math.PI / 2;
   ring1.position.y = 0.03;
   carGroup.add(ring1);
-  var ring2 = new THREE.Mesh(new THREE.TorusGeometry(3.75, 0.012, 8, 100),
-    new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.5 }));
+  var ring2Mat = new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.5 });
+  var ring2 = new THREE.Mesh(new THREE.TorusGeometry(3.75, 0.012, 8, 100), ring2Mat);
   ring2.rotation.x = Math.PI / 2;
   ring2.position.y = 0.03;
   carGroup.add(ring2);
@@ -131,8 +131,8 @@
 
   var cageGroup = new THREE.Group();
   var cageGeo = new THREE.DodecahedronGeometry(4.0, 0);
-  cageGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(cageGeo),
-    new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.5 })));
+  var cageLineMat = new THREE.LineBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.5 });
+  cageGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(cageGeo), cageLineMat));
   var cagePos = cageGeo.attributes.position;
   var cagePts = new Float32Array(cagePos.count * 3);
   for (var i = 0; i < cagePos.count; i++) {
@@ -142,9 +142,10 @@
   }
   var cagePtsGeo = new THREE.BufferGeometry();
   cagePtsGeo.setAttribute('position', new THREE.BufferAttribute(cagePts, 3));
-  cageGroup.add(new THREE.Points(cagePtsGeo, new THREE.PointsMaterial({
+  var cagePtsMat = new THREE.PointsMaterial({
     color: 0x67e8f9, size: 0.12, map: sprite, transparent: true, depthWrite: false
-  })));
+  });
+  cageGroup.add(new THREE.Points(cagePtsGeo, cagePtsMat));
   scene.add(cageGroup);
 
   // ---- particles ----
@@ -158,10 +159,32 @@
   }
   var pGeo = new THREE.BufferGeometry();
   pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  var particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
+  var particlesMat = new THREE.PointsMaterial({
     color: 0x38bdf8, size: 0.07, map: sprite, transparent: true, opacity: 0.8, depthWrite: false
-  }));
+  });
+  var particles = new THREE.Points(pGeo, particlesMat);
   scene.add(particles);
+
+  // ---- theme: night (cyan) vs day (amber). Car paint follows the theme too:
+  // sky-blue at night, burnt orange in daylight, matching the light-mode mockup. ----
+  var THEMES = {
+    dark: { paint: 0x38bdf8, platform: 0x0a1220, ring1: 0x22d3ee, ring2: 0x3b82f6, cage: 0x22d3ee, cagePts: 0x67e8f9, particles: 0x38bdf8, pCyan: 0x22d3ee, pBlue: 0x3b82f6 },
+    light: { paint: 0xea580c, platform: 0xe7dccb, ring1: 0xea580c, ring2: 0xf59e0b, cage: 0xea580c, cagePts: 0xf59e0b, particles: 0xd97706, pCyan: 0xf59e0b, pBlue: 0xea580c }
+  };
+  function applyTheme() {
+    var t = THEMES[document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'];
+    paint.color.set(t.paint);
+    platformMat.color.set(t.platform);
+    ring1Mat.color.set(t.ring1);
+    ring2Mat.color.set(t.ring2);
+    cageLineMat.color.set(t.cage);
+    cagePtsMat.color.set(t.cagePts);
+    particlesMat.color.set(t.particles);
+    pCyan.color.set(t.pCyan);
+    pBlue.color.set(t.pBlue);
+  }
+  applyTheme();
+  window.addEventListener('themechange', applyTheme);
 
   // ---- sizing ----
   function resize() {

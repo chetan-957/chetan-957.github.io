@@ -5,6 +5,14 @@
   if (!canvas || !canvas.getContext) return;
   var ctx = canvas.getContext('2d');
 
+  // Theme palette: night (cyan) vs day (amber). Read live so toggling repaints.
+  function themeColors() {
+    if (document.documentElement.getAttribute('data-theme') === 'light') {
+      return { particle: 'rgba(217,119,6,', inner: 'rgba(234,88,12,A)', outer: 'rgba(245,158,11,A)' };
+    }
+    return { particle: 'rgba(56,189,248,', inner: 'rgba(59,130,246,A)', outer: 'rgba(34,211,238,A)' };
+  }
+
   var PHI = (1 + Math.sqrt(5)) / 2;
 
   // ---- geometry ----
@@ -120,14 +128,14 @@
     particles.forEach(function (p, i) {
       var q = project(rot(p, rotX * 0.7, rotY * 0.7), w, h);
       var a = 0.12 + 0.4 * ((q[2] + 3) / 6);
-      ctx.fillStyle = 'rgba(56,189,248,' + a.toFixed(2) + ')';
+      ctx.fillStyle = themeColors().particle + a.toFixed(2) + ')';
       ctx.beginPath();
       ctx.arc(q[0], q[1], 1.3, 0, Math.PI * 2);
       ctx.fill();
     });
     // inner first (behind), then outer
-    drawShape(inner, innerEdges, 'rgba(59,130,246,A)', 1, 8);
-    drawShape(outer, outerEdges, 'rgba(34,211,238,A)', 1.4, 12);
+    drawShape(inner, innerEdges, themeColors().inner, 1, 8);
+    drawShape(outer, outerEdges, themeColors().outer, 1.4, 12);
     requestAnimationFrame(frame);
   }
 
@@ -165,8 +173,8 @@
     // static render, no animation
     var w = canvas.clientWidth, h = canvas.clientHeight;
     ctx.clearRect(0, 0, w, h);
-    drawShape(inner, innerEdges, 'rgba(59,130,246,A)', 1, 8);
-    drawShape(outer, outerEdges, 'rgba(34,211,238,A)', 1.4, 12);
+    drawShape(inner, innerEdges, themeColors().inner, 1, 8);
+    drawShape(outer, outerEdges, themeColors().outer, 1.4, 12);
   } else {
     requestAnimationFrame(frame);
   }

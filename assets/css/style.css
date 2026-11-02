@@ -111,7 +111,7 @@ img { max-width: 100%; }
 }
 .brand:hover { text-decoration: none; }
 .brand span { color: var(--cyan); }
-.nav-links { display: flex; gap: 4px; align-items: center; }
+.nav-links { display: flex; gap: 4px; align-items: center; margin-left: auto; }
 .nav-links a {
   color: var(--muted);
   font-size: 0.95rem;
@@ -138,6 +138,19 @@ img { max-width: 100%; }
   padding: 6px 12px;
   cursor: pointer;
 }
+.theme-toggle {
+  width: 38px; height: 38px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-left: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 50%;
+  font-size: 1.05rem; line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.theme-toggle:hover { background: var(--surface-2); }
 
 /* ---------- Hero ---------- */
 .hero { padding: 150px 0 70px; }
@@ -676,7 +689,7 @@ footer.site-footer {
   .about-layout { grid-template-columns: 1fr; gap: 32px; }
 }
 @media (max-width: 680px) {
-  .nav-toggle { display: block; }
+  .nav-toggle { display: block; margin-left: auto; }
   .nav-links {
     display: none;
     position: absolute;
@@ -694,4 +707,61 @@ footer.site-footer {
   .work-body { padding: 26px 24px 28px; }
   .work-cover { height: 170px; }
   .work-cover .w-num { font-size: 4rem; }
+}
+
+/* ---------- Light mode: Golden daylight (Daybreak amber) ---------- */
+html[data-theme="light"] {
+  --bg: #faf7f2;
+  --bg-soft: #fffdf9;
+  --surface: rgba(0, 0, 0, 0.04);
+  --surface-2: rgba(0, 0, 0, 0.07);
+  --border: rgba(0, 0, 0, 0.10);
+  --border-strong: rgba(0, 0, 0, 0.18);
+  --text: #1c1917;
+  --muted: #57534e;
+  --muted-2: #78716c;
+  --cyan: #ea580c;
+  --blue: #d97706;
+  --sky: #f59e0b;
+  --accent: #ea580c;
+  --accent-soft: rgba(234, 88, 12, 0.10);
+  --grad: linear-gradient(92deg, #ea580c, #f59e0b, #fbbf24);
+  --shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.16);
+}
+
+/* golden daylight wash replaces the night glow; stars hide when the sun is out */
+html[data-theme="light"] body::before {
+  background:
+    radial-gradient(800px 420px at 85% -5%, rgba(245, 158, 11, 0.22), transparent 60%),
+    radial-gradient(700px 500px at -10% 30%, rgba(234, 88, 12, 0.14), transparent 60%),
+    radial-gradient(600px 400px at 50% 110%, rgba(245, 158, 11, 0.12), transparent 60%);
+}
+html[data-theme="light"] body.star-bg::after { display: none; }
+html[data-theme="light"] ::selection { background: rgba(234, 88, 12, 0.25); }
+html[data-theme="light"] .nav { background: rgba(250, 247, 242, 0.85); }
+html[data-theme="light"] .btn-primary { box-shadow: 0 14px 34px -12px rgba(234, 88, 12, 0.45); }
+html[data-theme="light"] .socials a:hover { box-shadow: 0 10px 24px -8px rgba(234, 88, 12, 0.45); }
+html[data-theme="light"] .poly-glow {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.28), rgba(234, 88, 12, 0.12) 55%, transparent 70%);
+}
+html[data-theme="light"] .stat:hover { border-color: rgba(234, 88, 12, 0.4); }
+html[data-theme="light"] .work-item:hover,
+html[data-theme="light"] .skill-card:hover { border-color: rgba(234, 88, 12, 0.35); }
+html[data-theme="light"] .tl-item::before { box-shadow: 0 0 14px rgba(234, 88, 12, 0.4); }
+html[data-theme="light"] .edu-card .gpa { border-color: rgba(234, 88, 12, 0.3); }
+html[data-theme="light"] .profile-card { background: #fffdf9; }
+html[data-theme="light"] .profile-row { border-bottom-color: rgba(0, 0, 0, 0.10); }
+html[data-theme="light"] .pr-badge { background: rgba(34, 197, 94, 0.12); color: #15803d; }
+
+/* project covers go warm: amber / gold gradients instead of cyan / blue */
+html[data-theme="light"] .g1 { background: linear-gradient(135deg, #c2410c, #f59e0b); }
+html[data-theme="light"] .g2 { background: linear-gradient(135deg, #9a3412, #ea580c); }
+html[data-theme="light"] .g3 { background: linear-gradient(135deg, #b45309, #fbbf24); }
+html[data-theme="light"] .g4 { background: linear-gradient(135deg, #7c2d12, #f97316); }
+html[data-theme="light"] .g5 { background: linear-gradient(135deg, #92400e, #f59e0b); }
+html[data-theme="light"] .g6 { background: linear-gradient(135deg, #78350f, #fb923c); }
+html[data-theme="light"] .g7 { background: linear-gradient(135deg, #451a03, #f59e0b); }
+
+@media (max-width: 680px) {
+  html[data-theme="light"] .nav-links { background: rgba(250, 247, 242, 0.98); }
 }
