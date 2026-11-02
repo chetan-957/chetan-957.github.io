@@ -733,22 +733,22 @@ html[data-theme="light"] {
 html[data-theme="light"] body::before {
   background: none;
 }
-/* gradient sunset replaces the day sky: deep red top melting into orange and a warm horizon glow, with soft clouds. It scrolls away below the hero so lower sections sit on calm paper; no stripes, no rays. */
+/* fixed gradient sunset, visible everywhere like the mockup: deep red top, orange middle, warm peach bottom. Clouds are strong enough to actually see. No stripes, no rays. */
 html[data-theme="light"] body::after {
   content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 130vh;
+  position: fixed;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
   background-image:
-    radial-gradient(ellipse 220px 60px at 20% 20%, rgba(255, 255, 255, 0.35), transparent 70%),
-    radial-gradient(ellipse 180px 50px at 55% 28%, rgba(255, 255, 255, 0.28), transparent 70%),
-    radial-gradient(ellipse 160px 45px at 80% 16%, rgba(255, 255, 255, 0.30), transparent 70%),
-    radial-gradient(ellipse 70% 30% at 50% 62%, rgba(251, 146, 60, 0.50), transparent 70%),
-    linear-gradient(180deg, #991b1b 0%, #dc2626 16%, #ef2d1a 32%, #f97316 52%, #fb923c 70%, #fdba74 84%, #faf7f2 100%);
+    radial-gradient(ellipse 260px 70px at 12% 14%, rgba(255, 246, 230, 0.55), transparent 70%),
+    radial-gradient(ellipse 200px 55px at 38% 10%, rgba(255, 246, 230, 0.50), transparent 70%),
+    radial-gradient(ellipse 300px 60px at 68% 20%, rgba(255, 246, 230, 0.55), transparent 70%),
+    radial-gradient(ellipse 220px 50px at 85% 34%, rgba(255, 246, 230, 0.45), transparent 70%),
+    radial-gradient(ellipse 180px 45px at 25% 42%, rgba(255, 246, 230, 0.40), transparent 70%),
+    radial-gradient(ellipse 340px 36px at 55% 58%, rgba(255, 246, 230, 0.35), transparent 70%),
+    radial-gradient(ellipse 80% 35% at 50% 68%, rgba(251, 146, 60, 0.45), transparent 70%),
+    linear-gradient(180deg, #991b1b 0%, #dc2626 6%, #ef2d1a 12%, #f97316 24%, #fb923c 44%, #fdba74 68%, #ffedd5 100%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
@@ -757,7 +757,35 @@ html[data-theme="light"] .nav { background: rgba(250, 247, 242, 0.85); }
 html[data-theme="light"] .btn-primary { box-shadow: 0 14px 34px -12px rgba(234, 88, 12, 0.45); }
 html[data-theme="light"] .socials a:hover { box-shadow: 0 10px 24px -8px rgba(234, 88, 12, 0.45); }
 html[data-theme="light"] .poly-glow {
-  background: radial-gradient(circle, rgba(244, 63, 29, 0.22), rgba(234, 88, 12, 0.12) 55%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 244, 214, 0.95), rgba(251, 146, 60, 0.45) 55%, transparent 70%);
+}
+
+/* day mode content sections become warm-white cards on the sunset, like the mockup's panel: readable text, sunset showing in the gaps, hero, and footer */
+html[data-theme="light"] main > section:not(.hero) {
+  background: #fffdf9;
+  width: min(1200px, 94%);
+  margin: 0 auto 24px;
+  border-radius: 24px;
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.28);
+}
+html[data-theme="light"] main > section:not(.hero):not(#contact) {
+  padding-top: 76px !important;
+  padding-bottom: 76px;
+}
+
+/* hero readability on the sunset: gradient word goes solid, lead darkens, stats become white chips */
+html[data-theme="light"] .hero .grad-text {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: var(--text);
+  color: var(--text);
+}
+html[data-theme="light"] .hero .role { color: var(--text); }
+html[data-theme="light"] .hero p.lead { color: #292524; }
+html[data-theme="light"] .hero .stat {
+  background: rgba(255, 253, 249, 0.88);
+  border-color: rgba(0, 0, 0, 0.08);
 }
 html[data-theme="light"] .stat:hover { border-color: rgba(234, 88, 12, 0.4); }
 html[data-theme="light"] .work-item:hover,
