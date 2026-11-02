@@ -729,27 +729,26 @@ html[data-theme="light"] {
   --shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.16);
 }
 
-/* golden daylight wash replaces the night glow; stars hide when the sun is out */
+/* the fixed night glow is switched off in day mode; the sunset below carries the warmth */
 html[data-theme="light"] body::before {
-  background:
-    radial-gradient(800px 420px at 85% -5%, rgba(244, 63, 29, 0.16), transparent 60%),
-    radial-gradient(700px 500px at -10% 30%, rgba(234, 88, 12, 0.14), transparent 60%),
-    radial-gradient(600px 400px at 50% 110%, rgba(249, 115, 22, 0.12), transparent 60%);
+  background: none;
 }
-/* day sky replaces the night starfield: sun, soft clouds, and sunbeams behind all content */
+/* gradient sunset replaces the day sky: deep red top melting into orange and a warm horizon glow, with soft clouds. It scrolls away below the hero so lower sections sit on calm paper; no stripes, no rays. */
 html[data-theme="light"] body::after {
   content: "";
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 130vh;
   pointer-events: none;
   z-index: 0;
   background-image:
-    radial-gradient(circle 190px at 86% 9%, rgba(255, 236, 210, 0.95) 0%, rgba(244, 63, 29, 0.5) 45%, rgba(244, 63, 29, 0) 70%),
-    radial-gradient(ellipse 150px 42px at 18% 16%, rgba(255, 255, 255, 0.75), transparent 70%),
-    radial-gradient(ellipse 110px 34px at 30% 10%, rgba(255, 255, 255, 0.6), transparent 70%),
-    radial-gradient(ellipse 130px 36px at 62% 22%, rgba(255, 255, 255, 0.5), transparent 70%),
-    repeating-linear-gradient(115deg, rgba(249, 115, 22, 0.10) 0 70px, transparent 70px 170px),
-    linear-gradient(180deg, rgba(249, 115, 22, 0.14), rgba(249, 115, 22, 0) 42%);
+    radial-gradient(ellipse 220px 60px at 20% 20%, rgba(255, 255, 255, 0.35), transparent 70%),
+    radial-gradient(ellipse 180px 50px at 55% 28%, rgba(255, 255, 255, 0.28), transparent 70%),
+    radial-gradient(ellipse 160px 45px at 80% 16%, rgba(255, 255, 255, 0.30), transparent 70%),
+    radial-gradient(ellipse 70% 30% at 50% 62%, rgba(251, 146, 60, 0.50), transparent 70%),
+    linear-gradient(180deg, #991b1b 0%, #dc2626 16%, #ef2d1a 32%, #f97316 52%, #fb923c 70%, #fdba74 84%, #faf7f2 100%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
