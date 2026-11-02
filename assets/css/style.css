@@ -815,6 +815,12 @@ html[data-theme="light"] .birds { display: block; }
 .b4 svg { animation-duration: 0.7s; }
 .b5 { top: 28%; width: 22px; animation-duration: 42s; animation-delay: -18s; animation-direction: reverse; }
 .b5 svg { animation-duration: 0.6s; }
+.b6 { top: 44%; width: 24px; animation-duration: 40s; animation-delay: -8s; }
+.b6 svg { animation-duration: 0.6s; }
+.b7 { top: 52%; width: 19px; animation-duration: 48s; animation-delay: -20s; }
+.b7 svg { animation-duration: 0.5s; }
+.b8 { top: 61%; width: 27px; animation-duration: 36s; animation-delay: -30s; animation-direction: reverse; }
+.b8 svg { animation-duration: 0.7s; }
 @keyframes birdFly { from { transform: translateX(-10vw); } to { transform: translateX(110vw); } }
 @keyframes birdFlap { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.45); } }
 @media (prefers-reduced-motion: reduce) { html[data-theme="light"] .birds { display: none; } }
